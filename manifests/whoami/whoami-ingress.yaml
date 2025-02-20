@@ -5,7 +5,8 @@ metadata:
 
 spec:
   rules:
-    - http:
+    - host: ${DOMAIN}
+      http:
         paths:
           - path: /bar
             pathType: Prefix
