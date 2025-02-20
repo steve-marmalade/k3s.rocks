@@ -1,3 +1,4 @@
+---
 kind: Namespace
 apiVersion: v1
 metadata:
@@ -12,8 +13,8 @@ spec:
   selector:
     app: uptime-kuma
   ports:
-  - name: uptime-kuma
-    port: 3001
+    - name: uptime-kuma
+      port: 3001
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -33,7 +34,7 @@ spec:
     spec:
       containers:
         - name: uptime-kuma
-          image: louislam/uptime-kuma:1.23.7
+          image: louislam/uptime-kuma:1
           env:
             - name: UPTIME_KUMA_PORT
               value: "3001"
@@ -51,8 +52,8 @@ spec:
     - metadata:
         name: kuma-data
       spec:
-         accessModes:
-           - ReadWriteOnce
+        accessModes:
+          - ReadWriteOnce
         volumeMode: Filesystem
         resources:
           requests:
@@ -63,22 +64,16 @@ kind: Ingress
 metadata:
   name: kuma
   namespace: kuma
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: traefik
-  tls:
-  - hosts:
-    - uptime.${DOMAIN}
-    secretName: uptime.${DOMAIN}
   rules:
-  - host: uptime.${DOMAIN}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: uptime-kuma-service
-            port:
-              number: 3001
+    - host: uptime.${DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: uptime-kuma-service
+                port:
+                  number: 3001
